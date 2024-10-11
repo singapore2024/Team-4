@@ -10,6 +10,22 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
+			"black-font": "#000000",
+			"black-navbar": "#383838",
+			"blue-button": "#2F838E",
+			"green-success": "#077D55",
+			"grey-button-cancel": "#8D8D8D",
+			"grey-navbar": "#C8C8C8",
+			"grey-textbox": "#E7E7E7",
+			"pink-trigger": "#FFEEEE",
+			"red-button-1-main": "#FF5050",
+			"red-button-2": "#8A1D1D",
+			"red-danger": "#D91F11",
+			"white-font": "#FFFFFF",
+			"yellow-chart": "#F6D06C",
+			border: "hsl(var(--border))",
+			input: "hsl(var(--input))",
+			ring: "hsl(var(--ring))",
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -40,9 +56,6 @@ const config: Config = {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',

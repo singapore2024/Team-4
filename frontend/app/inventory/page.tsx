@@ -63,7 +63,7 @@ const InventoryPage = () => {
         <CarouselContent className="-ml-5">
             {exampleRecommendations.map((rec, index) => (
                 <CarouselItem key={index} className='pl-4'>
-                <div className="pl-4">
+                <div className="pl-5">
                   <Card>
                     <CardContent className="flex items-center justify-center p-6">
                       <span className="text-2xl font-semibold">{rec}</span>

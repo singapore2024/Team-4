@@ -4,17 +4,18 @@ const data = require('../resource/db');
 const express = require('express');
 const router = express.Router();
 
+router.use(express.json());
 
 // Create - Add a new inventory item
 router.post('/add', (req, res) => {
-  const newItem = req.body;
+  const inventory = data.data.inventory
+    const newItem = req.body.data;
 
   // Auto-increment ID based on the last item's ID
   const lastItem = inventory[inventory.length - 1];
   newItem.id = lastItem ? lastItem.id + 1 : 1; // Set id as 1 if inventory is empty
 
   inventory.push(newItem);
-  console.log(newItem); // Log the new item to the console
   res.status(201).send(newItem);
 });
 

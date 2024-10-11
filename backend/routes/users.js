@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // Define a route
-router.get('/', (req, res) => {
+router.get('/login', (req, res) => {
     res.send('this is user route');// this gets executed when user visit http://localhost:3000/user
 });
 

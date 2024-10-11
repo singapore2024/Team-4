@@ -6,9 +6,9 @@ import React, { useState, useEffect } from "react";
 
 interface Supply {
   name: string;
-  quantity: string;
-  price: string;
-  amount: string;
+  quantity: number;
+  price: number;
+  amount: number;
 }
 
 interface SupplyData {
@@ -21,7 +21,7 @@ export default function Page() {
   useEffect(() => {
     const fetchSupplyData = async () => {
       try {
-        const response = await axios.get("localhost:3001/supply");
+        const response = await axios.get("localhost:3001/suppliers");
         setSupplyData(response.data);
       } catch (error) {
         console.error("Error fetching testimonials:", error);

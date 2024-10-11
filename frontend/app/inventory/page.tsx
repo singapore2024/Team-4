@@ -8,7 +8,10 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table";
-import { getAllInventoryItems, addIngredient } from '@/components/ui/inventoryList';
+import { getAllInventoryItems } from '@/components/ui/inventoryList';
+import * as React from "react"
+ 
+import { Card, CardContent } from "@/components/ui/card"
 
 interface InventoryItem {
   id: number;
@@ -18,13 +21,12 @@ interface InventoryItem {
   supplier: string;
 }
 
+const exampleRecommendations = ['Your peas are expiring soon!', '', '']
+
 const InventoryPage = () => {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [errorMsg, setErrorMsg] = useState<Error | null>(null);
-  //const [searchTerm, setSearchTerm] = useState<string>(''); // State for the search input
-  //const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>([]); // State for filtered results
   
-
   // Fetch data from an API or local source
   useEffect(() => {
     const fetchInventory = async () => {
@@ -45,7 +47,9 @@ const InventoryPage = () => {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-5">
+    <div className="mx-auto max-w-7xl px-5 mt-8">
+      <h1 className="text-2xl font-bold mb-4 text-left">Inventory</h1>
+
       <Table className="w-full divide-y divide-gray-200">
         <TableHeader>
             <TableRow>

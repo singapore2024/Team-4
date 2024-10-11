@@ -31,7 +31,7 @@ router.post('/:id/accept', (req, res) => {
   });
 
   // Mark order as accepted
-  order.status = 'Accepted';
+  order.status = 'Approved';
   res.status(200).send({ message: 'Order accepted and inventory updated', order });
 });
 

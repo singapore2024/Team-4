@@ -21,10 +21,11 @@ export default function Page() {
   useEffect(() => {
     const fetchSupplyData = async () => {
       try {
-        const response = await axios.get("localhost:3001/suppliers");
+        const response = await axios.get("http://localhost:3001/suppliers");
         setSupplyData(response.data);
+        console.log("Data fetched successfully:", response.data);
       } catch (error) {
-        console.error("Error fetching testimonials:", error);
+        console.error("Error fetching data:", error);
       }
     };
 

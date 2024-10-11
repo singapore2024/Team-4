@@ -4,6 +4,8 @@ const data = require('../resource/db')
 const express = require('express');
 const router = express.Router();
 
+router.use(express.json());
+
 
 // Create - Add a new inventory item
 router.post('/add', (req, res) => {

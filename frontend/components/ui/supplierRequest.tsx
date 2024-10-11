@@ -22,9 +22,9 @@ import React, { useEffect, useState } from "react";
 
 interface SupplyData {
   name: string;
-  quantity: string;
-  price: string;
-  amount: string;
+  quantity: number;
+  price: number;
+  amount: number;
 }
 
 interface SupplierRequestProps {
@@ -34,7 +34,7 @@ interface SupplierRequestProps {
 function SupplierRequest({ supplyData }: SupplierRequestProps) {
   const handleOrder = async (supply: SupplyData[]) => {
     try {
-      const response = await axios.post("localhost:3001/supply/add", {
+      const response = await axios.post("http://localhost:3001/suppliers/add", {
         supply,
       });
 
@@ -99,7 +99,9 @@ function SupplierRequest({ supplyData }: SupplierRequestProps) {
           </TableBody>
         </Table>
         <div className="flex justify-end mt-4">
-          <Button color="primary" onClick={() => handleOrder(supplyData)}>Order All</Button>
+          <Button color="primary" onClick={() => handleOrder(supplyData)}>
+            Order All
+          </Button>
         </div>
       </CardContent>
     </Card>

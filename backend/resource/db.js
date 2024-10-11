@@ -27,6 +27,7 @@ const data = {
           price: 100,
           ingredients: [
             {
+              id: 1,
               ingredient_name: "broccoli",
               quantity: 2,
             },
@@ -48,6 +49,7 @@ const data = {
           price: 100,
           ingredients: [
             {
+              id: 2,
               ingredient_name: "fish",
               quantity: 1,
             },
@@ -88,7 +90,7 @@ const data = {
   ],
   suppliers: [
     { id: 1, item_name: "broccoli", name: "supplier1", quantity: 20, amount: 20 },
-    { id: 2, item_name: "carrots", name: "supplier2", quantity: 20, amount: 20 }
+    { id: 2, item_name: "fish", name: "supplier2", quantity: 20, amount: 20 }
   ],
 };
 

@@ -12,9 +12,9 @@ import { getAllInventoryItems, addIngredient } from '@/components/ui/inventoryLi
 
 interface InventoryItem {
   id: number;
-  name: string;
-  quantity: number;
-  expiryDate: string;
+  item_name: string;
+  on_hand: number;
+  expiry_date: string;
   supplier: string;
 }
 
@@ -60,9 +60,9 @@ const InventoryPage = () => {
           {inventory.map((item) => (
             <TableRow key={item.id}>
               <TableCell>{item.id}</TableCell>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.expiryDate}</TableCell>
-              <TableCell>{item.quantity} kg</TableCell>
+              <TableCell>{item.item_name}</TableCell>
+              <TableCell>{item.expiry_date}</TableCell>
+              <TableCell>{item.on_hand} kg</TableCell>
               <TableCell>{item.supplier}</TableCell>
             </TableRow>
           ))}

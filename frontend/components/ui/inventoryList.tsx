@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/inventory';
+const API_URL = 'http://localhost:3001/inventory';
 
 // Define the Ingredient type
 interface InventoryItem {

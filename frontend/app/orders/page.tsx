@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import OrdersDetailsCard from "@/components/orders/OrderDetailsCard"
 
 interface Ingredient {
   ingredient_name: string;
@@ -88,65 +89,7 @@ const orders: Order[] = [
   },
 ];
 
-export default function Component(): JSX.Element {
-  const [search, setSearch] = useState<string>("");
-
-  // Function to calculate total price for an order
-  const calculateTotalPrice = (dishes: Dish[]) => {
-    return dishes.reduce((total, dish) => total + dish.price * dish.quantity, 0).toFixed(2);
-  };
-
-  const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
-      const searchValue = search.toLowerCase();
-      return (
-        ("" + order.order_id).includes(searchValue) ||
-        order.customer.toLowerCase().includes(searchValue)
-      );
-    });
-  }, [search]);
-
-  return (
-    <div className="grid grid-cols-2 h-screen">
-      <div className="flex-1 overflow-auto">
-        <div className="p-6">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="relative flex-1">
-              <SearchIcon className="absolute left-2 top-2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search orders..."
-                className="pl-8 pr-4 py-2 rounded-md w-full"
-                value={search}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-        {filteredOrders.map((order) => (
-          <Card key={order.order_id} className="mb-4">
-            <CardHeader>
-              <CardTitle>Order ID: {order.order_id}</CardTitle>
-              {order.dish.map((dish) => (
-                <CardTitle key={dish.dish_id}>
-                  {dish.quantity} x {dish.name}
-                </CardTitle>
-              ))}
-            </CardHeader>
-            <CardContent>
-              <CardDescription>Date of order: {order.date_of_order}</CardDescription>
-              <CardDescription>Customer: {order.customer}</CardDescription>
-              <CardDescription>Total price: ${calculateTotalPrice(order.dish)}</CardDescription>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      <div>
-        h
-      </div>
-    </div>
-  );
-}
+//icons
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {}
 
@@ -169,3 +112,82 @@ function SearchIcon(props: IconProps): JSX.Element {
     </svg>
   );
 }
+
+//search bar
+export default function Component(): JSX.Element {
+  const [search, setSearch] = useState<string>("");
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false); // Collapsible state
+
+  // Function to calculate total price for an order
+  const calculateTotalPrice = (dishes: Dish[]) => {
+    return dishes.reduce((total, dish) => total + dish.price * dish.quantity, 0).toFixed(2);
+  };
+
+  const filteredOrders = useMemo(() => {
+    return orders.filter((order) => {
+      const searchValue = search.toLowerCase();
+      return (
+        ("" + order.order_id).includes(searchValue) ||
+        order.customer.toLowerCase().includes(searchValue)
+      );
+    });
+  }, [search]);
+
+  return (
+    <div className="flex h-screen">
+      {/* Left Side (Collapsible Section) */}
+      <div className={`transition-all duration-300 ${isCollapsed ? "w-20" : "w-1/2"} overflow-auto`}>
+        {/* Toggle Button */}
+        <Button 
+          className="mb-4" 
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
+          {isCollapsed ? "Expand" : "Collapse"}
+        </Button>
+
+        {/* Show sidebar content conditionally */}
+        {!isCollapsed && (
+          <div className="p-6">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="relative flex-1">
+                <SearchIcon className="absolute left-2 top-2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search orders..."
+                  className="pl-8 pr-4 py-2 rounded-md w-full"
+                  value={search}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {filteredOrders.map((order) => (
+              <Card key={order.order_id} className="mb-4">
+                <CardHeader>
+                  <CardTitle>Order ID: {order.order_id}</CardTitle>
+                  {order.dish.map((dish) => (
+                    <CardTitle key={dish.dish_id}>
+                      {dish.quantity} x {dish.name}
+                    </CardTitle>
+                  ))}
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>Date of order: {order.date_of_order}</CardDescription>
+                  <CardDescription>Customer: {order.customer}</CardDescription>
+                  <CardDescription>Total price: ${calculateTotalPrice(order.dish)}</CardDescription>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Right Side */}
+      <div className={`transition-all duration-300 ${isCollapsed ? "w-full" : "w-1/2"} mt-6`}>
+        <OrdersDetailsCard />
+      </div>
+    </div>
+  );
+}
+
+

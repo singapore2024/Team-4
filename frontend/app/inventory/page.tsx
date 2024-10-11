@@ -60,7 +60,7 @@ const InventoryPage = () => {
     <div className="mx-auto max-w-7xl px-5 mt-8">
       <h1 className="text-2xl font-bold mb-4 text-left">Inventory</h1>
       <Carousel className="w-full max-w-sm">
-        <CarouselContent className="-ml-5">
+        <CarouselContent className="-ml-6">
             {exampleRecommendations.map((rec, index) => (
                 <CarouselItem key={index} className='pl-4'>
                 <div className="pl-5">

@@ -57,9 +57,7 @@ const data = {
       ],
     },
   ],
-  users: [
-    { id: 1, user: "aaron", password: "123456" }
-  ],
+  users: [{ id: 1, user: "aaron", password: "123456" }],
   store_config: {
     daily_capacity: 100,
   },
@@ -87,8 +85,22 @@ const data = {
     },
   ],
   suppliers: [
-    { id: 1, item_name: "broccoli", name: "supplier1", quantity: 20, amount: 20 },
-    { id: 2, item_name: "carrots", name: "supplier2", quantity: 20, amount: 20 }
+    {
+      id: 1,
+      item_name: "broccoli",
+      name: "supplier1",
+      quantity: 20,
+      amount: 20,
+      price: 30,
+    },
+    {
+      id: 2,
+      item_name: "carrots",
+      name: "supplier2",
+      quantity: 20,
+      amount: 20,
+      price: 30,
+    },
   ],
 };
 

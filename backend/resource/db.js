@@ -20,7 +20,7 @@ const data = {
       id: 1,
       customer: "cust1",
       date_of_order: "2024-12-10",
-      status: 1, // Order accepted status
+      status: "Approved",
       dish: [
         {
           id: 1,
@@ -42,7 +42,7 @@ const data = {
       id: 2,
       customer: "cust2",
       date_of_order: "2024-12-10",
-      status: 0, // Pending order
+      status: "Pending", // Pending order
       dish: [
         {
           id: 1,

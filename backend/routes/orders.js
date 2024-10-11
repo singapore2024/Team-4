@@ -6,7 +6,36 @@ const router = express.Router();
 
 router.use(express.json());
 
-// Create - Add a new inventory item
+// Accept an order by ID and deduct inventory
+router.post('/:id/accept', (req, res) => {
+  const orders = data.data.orders;
+  const inventory = data.data.inventory;
+  const order = orders.find(o => o.id === parseInt(req.params.id)); // Find the order by ID
+
+  if (!order) return res.status(404).send('Order not found');
+
+  // Deduct ingredients from inventory when the order is accepted
+  order.dish.forEach(dish => {
+    dish.ingredients.forEach(ingredient => {
+      const inventoryItem = inventory.find(item => item.item_name === ingredient.ingredient_name);
+      if (inventoryItem) {
+        // Deduct quantity from inventory
+        inventoryItem.on_hand -= ingredient.quantity;
+        if (inventoryItem.on_hand < 0) {
+          return res.status(400).send(`Not enough ${ingredient.ingredient_name} in stock`);
+        }
+      } else {
+        return res.status(400).send(`${ingredient.ingredient_name} not found in inventory`);
+      }
+    });
+  });
+
+  // Mark order as accepted
+  order.status = 'Accepted';
+  res.status(200).send({ message: 'Order accepted and inventory updated', order });
+});
+
+
 router.post('/add', (req, res) => {
   const orders = data.data.orders;
   const newOrder = req.body.data;

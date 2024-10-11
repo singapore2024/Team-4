@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -17,8 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface SupplyData {
   name: string;
@@ -31,7 +31,22 @@ interface SupplierRequestProps {
   supplyData: SupplyData[];
 }
 
-function supplierRequest({ supplyData }: SupplierRequestProps) {
+function SupplierRequest({ supplyData }: SupplierRequestProps) {
+  const handleOrder = async (supply: SupplyData[]) => {
+    try {
+      const response = await axios.post("localhost:3001/supply/add", {
+        supply,
+      });
+
+      if (response.status === 200) {
+        alert("Order placed successfully");
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Failed to place order");
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="px-7">
@@ -50,7 +65,7 @@ function supplierRequest({ supplyData }: SupplierRequestProps) {
                 Price ($/KG)
               </TableHead>
               <TableHead className="hidden md:table-cell">Amount ($)</TableHead>
-              <TableHead className="text-right sr-only">order</TableHead>
+              <TableHead className="text-right sr-only">Order</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -75,18 +90,20 @@ function supplierRequest({ supplyData }: SupplierRequestProps) {
                   ${supply.amount}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button color="success">Order</Button>
+                  <Button color="success" onClick={() => handleOrder([supply])}>
+                    Order
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
         <div className="flex justify-end mt-4">
-          <Button color="primary">Order All</Button>
+          <Button color="primary" onClick={() => handleOrder(supplyData)}>Order All</Button>
         </div>
       </CardContent>
     </Card>
   );
 }
 
-export default supplierRequest;
+export default SupplierRequest;

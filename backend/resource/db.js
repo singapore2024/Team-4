@@ -85,6 +85,10 @@ const data = {
       last_chosen: "2024-02-10",
     },
   ],
+  suppliers : [
+    { id: 1, item_name: 'broccoli', name: "supplier1", quantity: 20, amount: 20},
+    { id: 2, item_name: 'carrots', name: "supplier2" , quantity: 20, amount: 20}
+  ]
 };
 
 module.exports = { data };

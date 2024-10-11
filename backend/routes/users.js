@@ -1,12 +1,25 @@
-// routes/users.js
 const express = require('express');
 const router = express.Router();
+const users = require('../resource/db').data.users;
 
-// Define a route
-router.get('/login', (req, res) => {
-  const newItem = req.body;
+router.use(express.json());
 
+
+// Define a login route
+router.post('/login', (req, res) => {
+    console.log(req)
+  const { user, password } = req.body; // Extract username and password from request
+  
+  // Find the user in the stored users array
+  const foundUser = users.find(u => u.user === user && u.password === password);
+
+  // Check if the user exists
+  if (foundUser) {
+    res.status(200).send({ message: 'Login successful', user: foundUser });
+  } else {
+    res.status(401).send({ message: 'Invalid username or password' });
+  }
 });
 
-// export the router module so that server.js file can use it
+// Export the router module
 module.exports = router;

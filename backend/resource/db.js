@@ -5,12 +5,14 @@ const data = {
       item_name: "broccoli",
       expiry_date: "2024-12-10",
       on_hand: 10,
+      price: 0.1
     },
     {
       id: 2,
       item_name: "fish",
       expiry_date: "2024-11-15",
       on_hand: 15,
+      price: 0.1
     },
   ],
   orders: [
@@ -52,6 +54,7 @@ const data = {
               id: 2,
               ingredient_name: "fish",
               quantity: 1,
+              price: 0.1
             },
           ],
           allergens: [],
@@ -89,8 +92,8 @@ const data = {
     },
   ],
   suppliers: [
-    { id: 1, item_name: "broccoli", name: "supplier1", quantity: 20, amount: 20 },
-    { id: 2, item_name: "fish", name: "supplier2", quantity: 20, amount: 20 }
+    { id: 1, item_name: "broccoli", name: "supplier1", quantity: 20, amount: 20, price: 30 },
+    { id: 2, item_name: "fish", name: "supplier2", quantity: 20, amount: 20, price: 30 }
   ],
 };
 

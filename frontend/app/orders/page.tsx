@@ -1,9 +1,8 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import {
   Card,
   CardContent,
@@ -13,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import OrdersDetailsCard from "@/components/orders/OrderDetailsCard"
+import axios from "axios";
 
 interface Ingredient {
   ingredient_name: string;
@@ -28,68 +28,12 @@ interface Dish {
 }
 
 interface Order {
-  order_id: number;
+  id: number;
   customer: string;
   date_of_order: string;
-  status: "Approved" | "Rejected";
+  status: "Approved" | "Rejected" | "Pending";
   dish: Dish[];
 }
-
-const orders: Order[] = [
-  {
-    order_id: 1,
-    customer: "Lynn",
-    date_of_order: "2012-12-12",
-    status: "Approved",
-    dish: [
-      {
-        dish_id: 1,
-        quantity: 1,
-        price: 10.99,
-        name: "Plain Rice",
-        ingredients: [{ ingredient_name: "Rice", quantity: 1 }],
-      },
-    ],
-  },
-  {
-    order_id: 2,
-    customer: "John",
-    date_of_order: "2023-05-15",
-    status: "Rejected",
-    dish: [
-      {
-        dish_id: 2,
-        quantity: 2,
-        price: 15.99,
-        name: "Sandwich",
-        ingredients: [
-          { ingredient_name: "Bread", quantity: 1 },
-          { ingredient_name: "Chicken", quantity: 1 },
-        ],
-      },
-    ],
-  },
-  {
-    order_id: 3,
-    customer: "Emma",
-    date_of_order: "2023-05-16",
-    status: "Approved",
-    dish: [
-      {
-        dish_id: 3,
-        quantity: 1,
-        price: 12.99,
-        name: "Chicken",
-        ingredients: [
-          { ingredient_name: "Rice", quantity: 1 },
-          { ingredient_name: "Chicken", quantity: 1 },
-        ],
-      },
-    ],
-  },
-];
-
-//icons
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {}
 
@@ -117,21 +61,43 @@ function SearchIcon(props: IconProps): JSX.Element {
 export default function Component(): JSX.Element {
   const [search, setSearch] = useState<string>("");
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false); // Collapsible state
+  const [orders, setOrders] = useState<Order[]>([]); // Store fetched orders
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Function to calculate total price for an order
   const calculateTotalPrice = (dishes: Dish[]) => {
     return dishes.reduce((total, dish) => total + dish.price * dish.quantity, 0).toFixed(2);
   };
 
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get("http://localhost:3001/orders/all");
+        setOrders(response.data); 
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        setError("Failed to load orders");
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []); 
+
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
       const searchValue = search.toLowerCase();
       return (
-        ("" + order.order_id).includes(searchValue) ||
+        ("" + order.id).includes(searchValue) ||
         order.customer.toLowerCase().includes(searchValue)
       );
     });
-  }, [search]);
+  }, [search, orders]); // Depend on orders and search
+
+  if (loading) return <p>Loading orders...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="flex h-screen">
@@ -162,9 +128,9 @@ export default function Component(): JSX.Element {
             </div>
 
             {filteredOrders.map((order) => (
-              <Card key={order.order_id} className="mb-4">
+              <Card key={order.id} className="mb-4">
                 <CardHeader>
-                  <CardTitle>Order ID: {order.order_id}</CardTitle>
+                  <CardTitle>Order ID: {order.id}</CardTitle>
                   {order.dish.map((dish) => (
                     <CardTitle key={dish.dish_id}>
                       {dish.quantity} x {dish.name}
@@ -189,5 +155,3 @@ export default function Component(): JSX.Element {
     </div>
   );
 }
-
-

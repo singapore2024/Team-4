@@ -1,109 +1,113 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/g3OdZGmaNqd
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 "use client"
 
 import React, { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+interface Ingredient {
+  ingredient_name: string;
+  quantity: number;
+}
+
+interface Dish {
+  dish_id: number;
+  quantity: number;
+  price: number;
+  name: string;
+  ingredients: Ingredient[];
+}
 
 interface Order {
-  id: string;
-  date: string;
-  total: number;
-  status: string;
+  order_id: number;
+  customer: string;
+  date_of_order: string;
+  status: "Approved" | "Rejected";
+  dish: Dish[];
 }
 
-interface Filters {
-  status: string[];
-  date: {
-    from: string | null;
-    to: string | null;
-  };
-  amount: {
-    min: string | null;
-    max: string | null;
-  };
-}
+const orders: Order[] = [
+  {
+    order_id: 1,
+    customer: "Lynn",
+    date_of_order: "2012-12-12",
+    status: "Approved",
+    dish: [
+      {
+        dish_id: 1,
+        quantity: 1,
+        price: 10.99,
+        name: "Plain Rice",
+        ingredients: [{ ingredient_name: "Rice", quantity: 1 }],
+      },
+    ],
+  },
+  {
+    order_id: 2,
+    customer: "John",
+    date_of_order: "2023-05-15",
+    status: "Rejected",
+    dish: [
+      {
+        dish_id: 2,
+        quantity: 2,
+        price: 15.99,
+        name: "Sandwich",
+        ingredients: [
+          { ingredient_name: "Bread", quantity: 1 },
+          { ingredient_name: "Chicken", quantity: 1 },
+        ],
+      },
+    ],
+  },
+  {
+    order_id: 3,
+    customer: "Emma",
+    date_of_order: "2023-05-16",
+    status: "Approved",
+    dish: [
+      {
+        dish_id: 3,
+        quantity: 1,
+        price: 12.99,
+        name: "Chicken",
+        ingredients: [
+          { ingredient_name: "Rice", quantity: 1 },
+          { ingredient_name: "Chicken", quantity: 1 },
+        ],
+      },
+    ],
+  },
+];
 
 export default function Component(): JSX.Element {
-  const [search, setSearch] = useState<string>("")
-  const [filters, setFilters] = useState<Filters>({
-    status: [],
-    date: {
-      from: null,
-      to: null,
-    },
-    amount: {
-      min: null,
-      max: null,
-    },
-  })
+  const [search, setSearch] = useState<string>("");
 
-  const orders: Order[] = [
-    {
-      id: "ORD001",
-      date: "2023-05-01",
-      total: 1234.56,
-      status: "Pending",
-    },
-    {
-      id: "ORD002",
-      date: "2023-05-02",
-      total: 567.89,
-      status: "Shipped",
-    },
-    {
-      id: "ORD003",
-      date: "2023-05-03",
-      total: 987.65,
-      status: "Delivered",
-    },
-    {
-      id: "ORD004",
-      date: "2023-05-04",
-      total: 321.09,
-      status: "Cancelled",
-    },
-    {
-      id: "ORD005",
-      date: "2023-05-05",
-      total: 654.32,
-      status: "Pending",
-    },
-  ]
+  // Function to calculate total price for an order
+  const calculateTotalPrice = (dishes: Dish[]) => {
+    return dishes.reduce((total, dish) => total + dish.price * dish.quantity, 0).toFixed(2);
+  };
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
-      const searchValue = search.toLowerCase()
-      const statusMatches = filters.status.length === 0 || filters.status.includes(order.status)
-      const dateMatches =
-        (!filters.date.from || new Date(order.date) >= new Date(filters.date.from)) &&
-        (!filters.date.to || new Date(order.date) <= new Date(filters.date.to))
-      const amountMatches =
-        (!filters.amount.min || order.total >= parseFloat(filters.amount.min)) &&
-        (!filters.amount.max || order.total <= parseFloat(filters.amount.max))
+      const searchValue = search.toLowerCase();
       return (
-        order.id.toLowerCase().includes(searchValue) ||
-        order.status.toLowerCase().includes(searchValue) ||
-        order.total.toString().includes(searchValue) ||
-        (statusMatches && dateMatches && amountMatches)
-      )
-    })
-  }, [search, filters])
+        ("" + order.order_id).includes(searchValue) ||
+        order.customer.toLowerCase().includes(searchValue)
+      );
+    });
+  }, [search]);
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="bg-primary text-primary-foreground py-4 px-6">
-        {/* Header content remains the same */}
-      </header>
+    <div className="grid grid-cols-2 h-screen">
       <div className="flex-1 overflow-auto">
         <div className="p-6">
           <div className="flex items-center gap-4 mb-6">
@@ -117,72 +121,34 @@ export default function Component(): JSX.Element {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
               />
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <FilterIcon className="h-4 w-4 mr-2" />
-                  Filters
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[300px]">
-                <DropdownMenuLabel>Filters</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <div className="grid gap-4 p-4">
-                  {/* Filter content remains the same */}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Order</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredOrders.map((order) => (
-                <TableRow key={order.id} className="cursor-pointer hover:bg-muted/50" onClick={() => {}}>
-                  <TableCell className="font-medium">{order.id}</TableCell>
-                  <TableCell>{order.date}</TableCell>
-                  <TableCell>${order.total.toFixed(2)}</TableCell>
-                <TableCell>
-                    <Badge>
-                        {order.status}
-                    </Badge>
-                </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
         </div>
+        {filteredOrders.map((order) => (
+          <Card key={order.order_id} className="mb-4">
+            <CardHeader>
+              <CardTitle>Order ID: {order.order_id}</CardTitle>
+              {order.dish.map((dish) => (
+                <CardTitle key={dish.dish_id}>
+                  {dish.quantity} x {dish.name}
+                </CardTitle>
+              ))}
+            </CardHeader>
+            <CardContent>
+              <CardDescription>Date of order: {order.date_of_order}</CardDescription>
+              <CardDescription>Customer: {order.customer}</CardDescription>
+              <CardDescription>Total price: ${calculateTotalPrice(order.dish)}</CardDescription>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      <div>
+        h
       </div>
     </div>
-  )
+  );
 }
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {}
-
-function FilterIcon(props: IconProps): JSX.Element {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
-  )
-}
 
 function SearchIcon(props: IconProps): JSX.Element {
   return (
@@ -201,5 +167,5 @@ function SearchIcon(props: IconProps): JSX.Element {
       <circle cx="11" cy="11" r="8" />
       <path d="m21 21-4.3-4.3" />
     </svg>
-  )
+  );
 }

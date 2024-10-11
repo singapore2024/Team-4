@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 // Define the type for each order object
 type Order = {
@@ -17,18 +18,48 @@ type OrdersState = {
 };
 
 // Create the Zustand store
-export const useOrdersStore = create<OrdersState>((set) => ({
-    orders: [],  // Initialize orders array as empty
+export const useOrdersStore = create<OrdersState>()(
+  persist(
+    (set) => ({
+      orders: [],
 
-    // Add an order
-    addOrder: (order: Order) =>
-        set((state) => ({
-            orders: [...state.orders, order],  // Add the new order to the array
-    })),
+      // Add an order
+      addOrder: (order: Order) =>
+        set((state) => {
+          const existingOrder = state.orders.find(
+            (existing) => existing.ingredient_name === order.ingredient_name
+          );
 
-    // Delete an order by its id
-    deleteOrder: (id: string) =>
+          if (existingOrder) {
+            // Update quantity and total_price if the ingredient already exists
+            return {
+              orders: state.orders.map((existing) =>
+                existing.ingredient_name === order.ingredient_name
+                  ? {
+                      ...existing,
+                      quantity: existing.quantity + order.quantity,
+                      total_price: existing.total_price + order.total_price,
+                    }
+                  : existing
+              ),
+            };
+          } else {
+            // Add the new order if ingredient doesn't exist
+            return {
+              orders: [...state.orders, order],
+            };
+          }
+        }),
+
+      // Delete an order by its id
+      deleteOrder: (id: string) =>
         set((state) => ({
-           orders: state.orders.filter((order) => order.id !== id),  // Filter out the order by id
-    })),
-}));
+          orders: state.orders.filter((order) => order.id !== id),
+        })),
+    }),
+    {
+      name: "orders-storage",
+      partialize: (state) => ({ orders: state.orders }),
+    }
+  )
+);

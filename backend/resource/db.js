@@ -31,7 +31,8 @@ const data = {
             {
               id: 1,
               ingredient_name: "broccoli",
-              quantity: 2,
+              quantity: 12,
+              price: 0.1
             },
           ],
           allergens: [],

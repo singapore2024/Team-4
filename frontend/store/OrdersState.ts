@@ -3,7 +3,6 @@ import { persist } from "zustand/middleware";
 
 // Define the type for each order object
 type Order = {
-  id: string;  // Assuming orders have an 'id' for easy identification
   ingredient_name: string;
   quantity: number;
   price: number;
@@ -15,6 +14,7 @@ type OrdersState = {
   orders: Order[];  // The array of orders
   addOrder: (order: Order) => void;  // Function to add an order
   deleteOrder: (id: string) => void; // Function to delete an order by its id
+  clearOrders: () => void; // Function to clear all orders
 };
 
 // Create the Zustand store
@@ -52,10 +52,13 @@ export const useOrdersStore = create<OrdersState>()(
         }),
 
       // Delete an order by its id
-      deleteOrder: (id: string) =>
+      deleteOrder: (ingredient_name: string) =>
         set((state) => ({
-          orders: state.orders.filter((order) => order.id !== id),
+          orders: state.orders.filter((order) => order.ingredient_name !== ingredient_name),
         })),
+        // Clear all orders
+      clearOrders: () =>
+        set({ orders: [] }), // Reset orders to an empty array
     }),
     {
       name: "orders-storage",

@@ -38,64 +38,13 @@ interface Order {
   dish: Dish[];
 }
 
-const newOrders = [
-    {
-        "id": 1,
-        "customer": "cust1",
-        "date_of_order": "2024-12-10",
-        "status": "Approved",
-        "dish": [
-            {
-                "id": 1,
-                "name": "",
-                "quantity": 10,
-                "price": 100,
-                "ingredients": [],
-                "allergens": []
-            }
-        ]
-    },
-    {
-        "id": 2,
-        "customer": "cust2",
-        "date_of_order": "2024-12-10",
-        "status": "Rejected",
-        "dish": [
-            {
-                "id": 1,
-                "name": "",
-                "quantity": 10,
-                "price": 100,
-                "ingredients": [
-                    {
-                        "ingredient_name": "fish",
-                        "quantity": 20,
-                        "price": 10,
-                    }
-                ],
-                "allergens": []
-            }
-        ]
-    },
-    {
-        "id": 3,
-        "customer": "cust3",
-        "date_of_order": "2024-12-10",
-        "status": "Rejected",
-        "dish": [
-            {
-                "id": 1,
-                "name": "",
-                "quantity": 10,
-                "price": 100,
-                "ingredients": [],
-                "allergens": [
-                    "carrots"
-                ]
-            }
-        ]
-    }
-]
+interface InventoryItem {
+    id: number,
+    item_name: string,
+    expiry_date: string,
+    on_hand: number,
+    price: number
+}
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {}
 
@@ -124,6 +73,7 @@ export default function Component(): JSX.Element {
   const [search, setSearch] = useState<string>("");
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false); // Collapsible state
   const [orders, setOrders] = useState<Order[]>([]); // Store fetched orders
+  const [inventoryMap, setInventoryMap] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -131,9 +81,26 @@ export default function Component(): JSX.Element {
     const ordersState = useOrdersStore((state) => state.orders);
     const { addOrder, deleteOrder } = useOrdersStore((state) => state);
 
-    const switchOrder = (order: Order) => {
-        setSelectedOrder(order);
-        console.log("Selected dish:", order.dish);
+    const createInventoryMap = (inventory: InventoryItem[]) => {
+        const inventoryMap: Record<string, number> = {}; // Initialize an empty object to store the map
+        inventory.forEach((item) => {
+            // Set item_name as the key and on_hand as the value
+            inventoryMap[item.item_name] = item.on_hand;
+        });
+
+        return inventoryMap; 
+    }
+
+    const switchOrder = async (order: Order) => {
+        try {
+            const response = await axios.get("http://localhost:3001/inventory/all");
+            const newInventoryMap = createInventoryMap(response.data); // Create the inventory map
+            setInventoryMap(newInventoryMap);
+            setSelectedOrder(order);
+            console.log("Selected dish:", order.dish);
+        }  catch (error) {
+            console.error("Error fetching orders:", error);
+        }
     }
 
     const handleConfirm = () => {
@@ -173,7 +140,7 @@ export default function Component(): JSX.Element {
   }, []); 
 
   const filteredOrders = useMemo(() => {
-    return newOrders.filter((order) => {
+    return orders.filter((order) => {
       const searchValue = search.toLowerCase();
       return (
         ("" + order.id).includes(searchValue) ||
@@ -237,7 +204,7 @@ export default function Component(): JSX.Element {
       {/* Right Side */}
       <div className={`transition-all duration-300 ${isCollapsed ? "w-full" : "w-1/2"} mt-6`}>
         {selectedOrder ? (
-          <OrdersDetailsCard order={selectedOrder} />
+          <OrdersDetailsCard order={selectedOrder} inventory={inventoryMap} />
         ) : (
           <p>Select an order to view details</p>
         )}

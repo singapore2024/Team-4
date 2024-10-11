@@ -7,6 +7,12 @@ let supplierRequests = [];
 // Middleware to parse JSON body
 router.use(express.json());
 
+router.get('/', (req, res) => {
+  const supplierData = data.data.suppliers; // Access the supplier data
+  res.status(200).json(supplierData); // Return the supplier data as JSON
+});
+
+
 // Create a new supplier request and update inventory
 router.post('/add', (req, res) => {
   const requestData = req.body.data; // inventories

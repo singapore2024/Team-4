@@ -13,83 +13,89 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import OrdersDetailsCard from "@/components/orders/OrderDetailsCard"
+import { useOrdersStore } from "@/store/OrdersState"
 
 interface Ingredient {
   ingredient_name: string;
   quantity: number;
+  price: number;
 }
 
 interface Dish {
-  dish_id: number;
+  id: number;
+  name: string;
   quantity: number;
   price: number;
-  name: string;
   ingredients: Ingredient[];
+  allergens: string[];
 }
 
 interface Order {
-  order_id: number;
+  id: number;
   customer: string;
   date_of_order: string;
-  status: "Approved" | "Rejected";
+  status: string;
   dish: Dish[];
 }
 
-const orders: Order[] = [
-  {
-    order_id: 1,
-    customer: "Lynn",
-    date_of_order: "2012-12-12",
-    status: "Approved",
-    dish: [
-      {
-        dish_id: 1,
-        quantity: 1,
-        price: 10.99,
-        name: "Plain Rice",
-        ingredients: [{ ingredient_name: "Rice", quantity: 1 }],
-      },
-    ],
-  },
-  {
-    order_id: 2,
-    customer: "John",
-    date_of_order: "2023-05-15",
-    status: "Rejected",
-    dish: [
-      {
-        dish_id: 2,
-        quantity: 2,
-        price: 15.99,
-        name: "Sandwich",
-        ingredients: [
-          { ingredient_name: "Bread", quantity: 1 },
-          { ingredient_name: "Chicken", quantity: 1 },
-        ],
-      },
-    ],
-  },
-  {
-    order_id: 3,
-    customer: "Emma",
-    date_of_order: "2023-05-16",
-    status: "Approved",
-    dish: [
-      {
-        dish_id: 3,
-        quantity: 1,
-        price: 12.99,
-        name: "Chicken",
-        ingredients: [
-          { ingredient_name: "Rice", quantity: 1 },
-          { ingredient_name: "Chicken", quantity: 1 },
-        ],
-      },
-    ],
-  },
-];
-
-//icons
+const newOrders = [
+    {
+        "id": 1,
+        "customer": "cust1",
+        "date_of_order": "2024-12-10",
+        "status": "Approved",
+        "dish": [
+            {
+                "id": 1,
+                "name": "",
+                "quantity": 10,
+                "price": 100,
+                "ingredients": [],
+                "allergens": []
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "customer": "cust2",
+        "date_of_order": "2024-12-10",
+        "status": "Rejected",
+        "dish": [
+            {
+                "id": 1,
+                "name": "",
+                "quantity": 10,
+                "price": 100,
+                "ingredients": [
+                    {
+                        "ingredient_name": "fish",
+                        "quantity": 20,
+                        "price": 10,
+                    }
+                ],
+                "allergens": []
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "customer": "cust3",
+        "date_of_order": "2024-12-10",
+        "status": "Rejected",
+        "dish": [
+            {
+                "id": 1,
+                "name": "",
+                "quantity": 10,
+                "price": 100,
+                "ingredients": [],
+                "allergens": [
+                    "carrots"
+                ]
+            }
+        ]
+    }
+]
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {}
 
@@ -115,19 +121,43 @@ function SearchIcon(props: IconProps): JSX.Element {
 
 //search bar
 export default function Component(): JSX.Element {
-  const [search, setSearch] = useState<string>("");
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false); // Collapsible state
+    const [search, setSearch] = useState<string>("");
+    const [isCollapsed, setIsCollapsed] = useState<boolean>(false); // Collapsible state
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  // Function to calculate total price for an order
-  const calculateTotalPrice = (dishes: Dish[]) => {
-    return dishes.reduce((total, dish) => total + dish.price * dish.quantity, 0).toFixed(2);
-  };
+    const ordersState = useOrdersStore((state) => state.orders);
+    const { addOrder, deleteOrder } = useOrdersStore((state) => state);
+
+    const switchOrder = (order: Order) => {
+        setSelectedOrder(order);
+        console.log("Selected dish:", order.dish);
+    }
+
+    const handleConfirm = () => {
+        // TODO: implement logic to confirm order
+        // Create a new order object
+        const newOrder = {
+        id: "1", // Generate a unique ID for the order
+        ingredient_name: "New Ingredient", // You can change this to a dynamic value
+        quantity: 10, // Replace with a dynamic value
+        price: 5.5, // Replace with a dynamic value
+        total_price: 10 * 5.5, // Calculated total price
+        };
+
+        // Add the new order to the store
+        addOrder(newOrder);
+    }
+
+    // Function to calculate total price for an order
+    const calculateTotalPrice = (dishes: Dish[]) => {
+        return dishes.reduce((total, dish) => total + dish.price * dish.quantity, 0).toFixed(2);
+    };
 
   const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
+    return newOrders.filter((order) => {
       const searchValue = search.toLowerCase();
       return (
-        ("" + order.order_id).includes(searchValue) ||
+        ("" + order.id).includes(searchValue) ||
         order.customer.toLowerCase().includes(searchValue)
       );
     });
@@ -162,11 +192,11 @@ export default function Component(): JSX.Element {
             </div>
 
             {filteredOrders.map((order) => (
-              <Card key={order.order_id} className="mb-4">
+              <Card key={order.id} className="mb-4 transform transition-transform duration-300 hover:scale-105 cursor-pointer" onClick={() => switchOrder(order)}>
                 <CardHeader>
-                  <CardTitle>Order ID: {order.order_id}</CardTitle>
+                  <CardTitle>Order ID: {order.id}</CardTitle>
                   {order.dish.map((dish) => (
-                    <CardTitle key={dish.dish_id}>
+                    <CardTitle key={dish.id}>
                       {dish.quantity} x {dish.name}
                     </CardTitle>
                   ))}
@@ -184,7 +214,11 @@ export default function Component(): JSX.Element {
 
       {/* Right Side */}
       <div className={`transition-all duration-300 ${isCollapsed ? "w-full" : "w-1/2"} mt-6`}>
-        <OrdersDetailsCard />
+        {selectedOrder ? (
+          <OrdersDetailsCard order={selectedOrder} />
+        ) : (
+          <p>Select an order to view details</p>
+        )}
       </div>
     </div>
   );
